@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from './CartSlice';
 import CartItem from './CartItem';
 import './ProductList.css';
@@ -8,6 +8,12 @@ function ProductList({ onHomeClick }) {
   const [showCart, setShowCart] = useState(false);
   const [addedToCart, setAddedToCart] = useState({});
   const dispatch = useDispatch();
+
+  const cartItems = useSelector((state) => state.cart.items);
+  const cartItemCount = cartItems.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
 
   const plantsArray = [
     {
@@ -294,9 +300,11 @@ function ProductList({ onHomeClick }) {
               Plants
             </a>
           </div>
+
           <div>
             <a href="#" onClick={handleCartClick} style={linkStyle}>
               <h1 className="cart">
+                <span className="cart_quantity_count">{cartItemCount}</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 256 256"
@@ -353,6 +361,7 @@ function ProductList({ onHomeClick }) {
                         addedToCart[plant.name] ? 'added-to-cart' : ''
                       }`}
                       onClick={() => handleAddToCart(plant)}
+                      disabled={Boolean(addedToCart[plant.name])}
                     >
                       {addedToCart[plant.name] ? 'Added to Cart' : 'Add to Cart'}
                     </button>
